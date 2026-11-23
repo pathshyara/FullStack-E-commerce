@@ -1,0 +1,21 @@
+<nav *ngIf="!hideNavbar">
+  <ul>
+    <li class="logo-container">
+      <img src="assets/logo.png" alt="Qurba Food Logo" class="nav-logo">
+    </li>
+    <li><a routerLink="/home" routerLinkActive="active" [fragment]="'hero'" (click)="scrollToSection('hero')"><i class="bi bi-house"></i> <span>Home</span></a></li>
+    <li><a routerLink="/home" routerLinkActive="active" [fragment]="'blog'" (click)="scrollToSection('blog')"><i class="bi bi-journal-text"></i> <span>Blog</span></a></li>
+    <li><a routerLink="/home" routerLinkActive="active" [fragment]="'about'" (click)="scrollToSection('about')"><i class="bi bi-info-circle"></i> <span>About</span></a></li>
+    <li><a routerLink="/home" routerLinkActive="active" [fragment]="'contact'" (click)="scrollToSection('contact')"><i class="bi bi-envelope"></i> <span>Contact</span></a></li>
+    <li style="margin-left:auto;">
+      <a routerLink="/login" routerLinkActive="active">
+        <i class="bi bi-person-lines-fill"></i>
+        <span>Account</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div> 

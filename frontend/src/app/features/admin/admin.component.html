@@ -1,0 +1,241 @@
+<app-top-navbar></app-top-navbar>
+<div class="admin-content">
+  <!-- Alert Messages -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="bi bi-check-circle"></i> {{ successMessage }}
+  </div>
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+  </div>
+
+  <!-- Home Section -->
+  <div *ngIf="activeTab === 'home'">
+    <div class="welcome-section">
+      <h1>Welcome to Admin Panel</h1>
+      <p>Use the navigation bar above to manage your store.</p>
+      
+      <div class="dashboard-cards">
+        <div class="card">
+          <div class="card-header">Products</div>
+          <div class="card-body">
+            <h2>{{ products.length }}</h2>
+            <p>Total Products</p>
+          </div>
+          <div class="card-footer">
+            <button mat-button color="primary" (click)="router.navigate(['/adminpage/products'])">
+              View All Products
+            </button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Categories</div>
+          <div class="card-body">
+            <h2>{{ categories.length }}</h2>
+            <p>Total Categories</p>
+          </div>
+          <div class="card-footer">
+            <button mat-button color="primary" (click)="router.navigate(['/adminpage/categories'])">
+              Manage Categories
+            </button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Orders</div>
+          <div class="card-body">
+            <h2>{{ orders.length }}</h2>
+            <p>Total Orders</p>
+          </div>
+          <div class="card-footer">
+            <button mat-button color="primary" (click)="router.navigate(['/adminpage/orders'])">
+              View All Orders
+            </button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Quick Actions</div>
+          <div class="card-body">
+            <button mat-raised-button color="primary" (click)="navigateToAddProduct()">
+              <mat-icon>add</mat-icon> Add New Product
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div *ngIf="activeTab === 'products'">
+    <div class="header-row">
+      <h2>Products Management</h2>
+      <button mat-raised-button color="primary" (click)="router.navigate(['/adminpage/add-product'])">
+        <mat-icon>add</mat-icon> Add Product
+      </button>
+    </div>
+
+    <!-- Search and filter section -->
+    <div class="filters-section">
+      <div class="search-container">
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Search products...">
+        <button (click)="applyFilters()">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <div class="filter-options">
+        <div class="category-filter">
+          <select [(ngModel)]="selectedCategory">
+            <option value="">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+          </select>
+        </div>
+
+        <div class="sort-filter">
+          <select [(ngModel)]="sortOrder">
+            <option value="">Sort By</option>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
+          </select>
+        </div>
+
+        <button class="apply-filters" (click)="applyFilters()">Apply Filters</button>
+        <button class="reset-filters" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <app-admin-table
+      *ngIf="!loading"
+      [columns]="productColumns"
+      [data]="filteredProducts"
+      (edit)="openEditProduct($event)"
+      (delete)="openDeleteProduct($event)"></app-admin-table>
+  </div>
+  
+  <!-- Add Product Section -->
+  <div *ngIf="activeTab === 'add-product'">
+    <div class="header-row">
+      <h2>Add New Product</h2>
+    </div>
+    
+    <div class="product-form-container">
+      <app-product-form
+        (formSubmit)="handleProductFormSubmit($event)"
+        (cancelForm)="router.navigate(['/adminpage/products'])">
+      </app-product-form>
+    </div>
+  </div>
+  
+  <!-- Categories Section -->
+  <div *ngIf="activeTab === 'categories'">
+    <div class="header-row">
+      <h2>Category Management</h2>
+    </div>
+    
+    <div class="categories-list">
+      <div class="category-card" *ngFor="let category of categories">
+        <h3>{{ category }}</h3>
+        <p>{{ getProductCountByCategory(category) }} products</p>
+        <button mat-button color="primary" (click)="filterProductsByCategory(category)">
+          View Products
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Orders Section -->
+  <div *ngIf="activeTab === 'orders'" class="orders-section">
+    <h2>Orders Management</h2>
+    
+    <!-- Orders filters -->
+    <div class="filters-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by Status</mat-label>
+        <mat-select [(ngModel)]="orderStatusFilter" (selectionChange)="applyOrderFilters()">
+          <mat-option [value]="''">All</mat-option>
+          <mat-option value="PENDING">Pending</mat-option>
+          <mat-option value="CONFIRMED">Confirmed</mat-option>
+          <mat-option value="SHIPPED">Shipped</mat-option>
+          <mat-option value="DELIVERED">Delivered</mat-option>
+          <mat-option value="CANCELLED">Cancelled</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="resetOrderFilters()">Reset Filters</button>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="ordersError" class="alert alert-danger">
+      <p><strong>Error loading orders:</strong> {{ ordersError }}</p>
+      <p>Using mock data for display purposes. Some features may be limited.</p>
+      <button mat-raised-button color="warn" (click)="loadOrders()">Retry</button>
+    </div>
+    
+    <!-- Loading indicator -->
+    <div *ngIf="loadingOrders" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading orders...</p>
+    </div>
+
+    <!-- Orders table -->
+    <div class="orders-table-container" *ngIf="!loadingOrders">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of paginatedOrders">
+            <td>{{ order.orderId }}</td>
+            <td>{{ order.user?.username || 'Unknown' }}</td>
+            <td>{{ formatDate(order.orderDate) }}</td>
+            <td>RM {{ order.totalAmount.toFixed(2) }}</td>
+            <td>
+              <span class="order-status" [ngClass]="order.status.toLowerCase()">{{ order.status }}</span>
+            </td>
+            <td class="actions">
+              <div class="status-update">
+                <mat-form-field appearance="outline" class="status-select">
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="order.newStatus" [value]="order.status">
+                    <mat-option *ngFor="let status of orderStatusOptions" [value]="status">{{ status }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-raised-button color="primary" 
+                        [disabled]="order.status === (order.newStatus || order.status)"
+                        (click)="handleStatusUpdate(order)">
+                  Update
+                </button>
+              </div>
+              <button mat-button color="accent" (click)="viewOrderDetails(order)">View Details</button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedOrders.length === 0">
+            <td colspan="6" class="no-orders">No orders found</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Pagination -->
+      <mat-paginator
+        [length]="totalOrders"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="pageIndex"
+        (page)="handlePageEvent($event)"
+        aria-label="Select page of orders">
+      </mat-paginator>
+    </div>
+  </div>
+</div> 

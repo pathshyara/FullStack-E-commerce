@@ -1,0 +1,199 @@
+<!-- Hero Section -->
+<section id="hero" class="hero">
+    <!-- Fixed Overlay Content -->
+    <div class="fixed-content">
+        <h1>Fresh & Delicious Food</h1>
+        <p>Discover a world of flavors at your fingertips</p>
+        <button class="shop-now" (click)="onSlideClick()">Shop Now</button>
+    </div>
+
+    <!-- Slider Container -->
+    <div class="hero-slider">
+        <button class="slider-nav prev" (click)="previousSlide()">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="slider-nav next" (click)="nextSlide()">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+        
+        <div class="slides" [class.no-transition]="isResetting" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'">
+            <div class="slide" *ngFor="let slide of slides">
+                <img [src]="'assets/' + slide.image" [alt]="slide.alt">
+            </div>
+        </div>
+
+        <div class="slider-dots">
+            <button class="dot" *ngFor="let slide of slides; let i = index" 
+                    [class.active]="i === currentSlide"
+                    (click)="goToSlide(i)">
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="feature-container">
+        <div class="feature-card">
+            <i class="bi bi-truck"></i>
+            <h3>Free Delivery</h3>
+            <p>On orders over $50</p>
+        </div>
+        
+        <div class="feature-card">
+            <i class="bi bi-clock"></i>
+            <h3>Quick Service</h3>
+            <p>30 minutes delivery</p>
+        </div>
+        
+        <div class="feature-card">
+            <i class="bi bi-shield-check"></i>
+            <h3>Secure Payment</h3>
+            <p>100% secure checkout</p>
+        </div>
+        
+        <div class="feature-card">
+            <i class="bi bi-headset"></i>
+            <h3>24/7 Support</h3>
+            <p>Always here to help</p>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+<section id="blog" class="blog-section">
+    <div class="section-header">
+        <h2>Latest From Our Blog</h2>
+        <p class="section-subtitle">Discover culinary stories, tips, and inspiration</p>
+    </div>
+    <div class="blog-container">
+        <div class="blog-card" *ngFor="let post of blogPosts">
+            <div class="blog-image">
+                <img [src]="'assets/' + post.image" [alt]="post.title">
+            </div>
+            <div class="blog-content">
+                <h3>{{post.title}}</h3>
+                <p>{{post.description}}</p>
+                <button class="read-more-btn" (click)="openBlogModal(post)">Read More</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="closeModal()">
+            <i class="bi bi-x"></i>
+        </button>
+        <div class="modal-body" *ngIf="selectedBlog">
+            <div class="modal-image">
+                <img [src]="'assets/' + selectedBlog.image" [alt]="selectedBlog.title">
+            </div>
+            <div class="modal-content-wrapper">
+                <h2>{{selectedBlog.title}}</h2>
+                <p>{{selectedBlog.fullContent}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="about-container">
+        <div class="about-content">
+            <h2>About Our Food Journey</h2>
+            <div class="company-info">
+                <h3>Syarikat Qurba Food Industries</h3>
+                <p>Ditubuhkan sebagai sebuah syarikat milik penuh usahawan bumiputera islam.</p>
+                <p>Bermula pada tahun 2007</p>
+                <div class="company-details">
+                    <div class="location-info">
+                        <h4><i class="bi bi-geo-alt-fill"></i> Lokasi Tetap</h4>
+                        <p>No.66 & 67, Lot Industri KEDA Napoh,<br>06000 Jitra, Kedah Darul Aman.</p>
+                    </div>
+                    <div class="registration-info">
+                        <h4><i class="bi bi-building"></i> Pendaftaran Syarikat</h4>
+                        <p>Mendaftarkan syarikat atas nama Qurba Food Manufacturing Sdn.Bhd.</p>
+                        <p>Didaftarkan pada 17hb.Ogos 2011.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="about-features">
+                <div class="about-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Premium Quality Ingredients</span>
+                </div>
+                <div class="about-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Expert Chefs</span>
+                </div>
+                <div class="about-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Sustainable Practices</span>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="https://www.facebook.com/AmeenQurba" target="_blank" class="learn-more-btn">
+                    <i class="bi bi-facebook"></i>
+                    Visit Our Facebook Page
+                </a>
+            </div>
+        </div>
+        <div class="about-images">
+            <div class="main-image">
+                <img src="assets/about.png" alt="About Qurba Food">
+            </div>
+            <div class="secondary-image">
+                <img src="assets/about2.png" alt="Our Facilities">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <p>We'd love to hear from you. Contact us for any questions or feedback.</p>
+            <div class="contact-details">
+                <div class="contact-item">
+                    <i class="bi bi-telephone-fill"></i>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <div>
+                        <h3>Email</h3>
+                        <p>support&#64;fooddelivery.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <div>
+                        <h3>Address</h3>
+                        <p>123 Food Street, Cuisine City, FC 12345</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form">
+            <form>
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section> 

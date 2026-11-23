@@ -1,0 +1,91 @@
+<div class="review-page-container">
+  <!-- Use the shared header component -->
+  <app-customer-header [cartCount]="cartItemCount" [cartAnimation]="cartAnimation"></app-customer-header>
+
+  <div class="review-container">
+    <div class="review-header">
+      <button class="back-button" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i> Back to Products
+      </button>
+      <h2>Product Reviews {{ product ? '- ' + product.name : '' }}</h2>
+    </div>
+    
+    <!-- Average Rating Display -->
+    <div class="average-rating">
+      <h3>Average Rating: {{ averageRating | number:'1.1-1' }}/5</h3>
+      <app-star-rating [rating]="averageRating" [readonly]="true"></app-star-rating>
+      <p>Based on {{ reviews.length }} reviews</p>
+    </div>
+    
+    <!-- Review Form -->
+    <div class="review-form-container">
+      <h3>Write a Review</h3>
+      
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+      
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+      
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+        <div class="form-group">
+          <label for="rating">Rating:</label>
+          <div class="rating-selector">
+            <select id="rating" formControlName="rating" class="form-control">
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Very Good</option>
+              <option value="3">3 - Good</option>
+              <option value="2">2 - Fair</option>
+              <option value="1">1 - Poor</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="comment">Your Review:</label>
+          <textarea 
+            id="comment" 
+            formControlName="comment" 
+            class="form-control" 
+            rows="4" 
+            placeholder="Share your experience with this product..."></textarea>
+          <div *ngIf="reviewForm.get('comment')?.errors?.['maxlength']" class="error-message">
+            Comment must be less than 500 characters.
+          </div>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="reviewForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+        </button>
+      </form>
+    </div>
+    
+    <!-- Reviews List -->
+    <div class="reviews-list">
+      <h3>Customer Reviews</h3>
+      
+      <div *ngIf="reviews.length === 0" class="no-reviews">
+        No reviews yet. Be the first to review this product!
+      </div>
+      
+      <div *ngFor="let review of reviews" class="review-item">
+        <div class="review-header">
+          <div class="user-info">
+            <strong>{{ review.username }}</strong>
+            <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
+          </div>
+          <app-star-rating [rating]="review.rating" [readonly]="true"></app-star-rating>
+        </div>
+        
+        <div class="review-content">
+          <p>{{ review.comment || 'No comment provided.' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

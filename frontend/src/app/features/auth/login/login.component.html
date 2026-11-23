@@ -1,0 +1,61 @@
+<div class="auth-container">
+  <div class="tabs">
+    <div class="tab active">Login</div>
+    <div class="tab" (click)="goToRegister()" style="cursor: pointer;">Register</div>
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <!-- Display login error message -->
+    <div class="error-alert" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username *</label>
+      <input 
+        type="text" 
+        id="username" 
+        name="username" 
+        formControlName="username"
+        autocomplete="username">
+      <div class="error-message" *ngIf="loginSubmitted && l['username'].errors">
+        <small *ngIf="l['username'].errors?.['required']">Username is required</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <div class="password-input-container">
+        <input 
+          [type]="hidePassword ? 'password' : 'text'"
+          id="password" 
+          name="password" 
+          formControlName="password"
+          autocomplete="current-password">
+        <span class="password-visibility-icon" (click)="togglePasswordVisibility()">
+          <i class="bi" [ngClass]="hidePassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </span>
+      </div>
+      <div class="error-message" *ngIf="loginSubmitted && l['password'].errors">
+        <small *ngIf="l['password'].errors?.['required']">Password is required</small>
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label" for="rememberMe">
+        <input 
+          type="checkbox" 
+          id="rememberMe" 
+          name="rememberMe" 
+          formControlName="rememberMe">
+        <span>Remember me</span>
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="loading" class="login-button">Log In</button>
+
+    <div class="forgot-password">
+      <a href="#">Lost your password?</a>
+    </div>
+  </form>
+</div> 
